@@ -1,0 +1,155 @@
+external localization systems can be based on an
+augmented GPS, radio, ultrasound or infrared bea-
+cons, or (multi-) camera systems. Typically, these sys-
+tems require special equipment, which might be pro-
+hibitively expensive, difficult to set up or too heavy to
+be used by small robots. Moreover, most of these sys-
+tems are not scalable in terms of the number of robots,
+i.e., they do not allow to localize hundreds of robots in
+real time. This paper presents a fast vision-based local-
+ization system based on off-the-shelf components.
+The system is precise, computationally efficient, easy
+to use, and robust to variable illumination.
+The core of the system is a detector of black-and-
+white circular planar ring patterns (roundels), similar
+to those used for camera calibration. A complete local-
+ization system based on this detector is presented. The
+system provides estimation of the roundel position
+with precision in the order of millimeters for distances
+in the order of meters.
+The detection with tracking of a single roundel pat-
+tern is very quick and the system is able to process
+several thousands of images per second on a com-
+mon desktop PC. This high efficiency enables not only
+tracking of several hundreds of targets at a camera
+frame-rate, but also implementation of the method on
+computationally restricted platforms. The fast update
+rate of the localization system allows to directly
+employ it in the feedback loop of mobile robots,
+which require precise and high-frequency localization
+information.
+The system is composed of low-cost off-the-shelf
+components only – a low-end computer, standard web-
+cam, and printable patterns are the only required ele-
+ments. The expected coverage, precision, and image
+processing speed of the system can be estimated from
+the camera resolution, computational power, and pat-
+tern diameter. This allows the user to choose between
+high-end and low-end cameras, estimate if a partic-
+ular hardware platform would be able to achieve the
+desired localization frequency, and calculate a suitable
+pattern size for the user’s specific application.
+Ease of the system setup and use are also driv-
+ing factors of the proposed implementation, which
+does not require user-set parameters or an intri-
+cate set-up process. The implementation also con-
+tains an easy tool for camera calibration, which,
+unlike other calibration tools, does not require user
+interaction. At the same time, the implementation is
+proposed as a library, which can be integrated into
+commonly used computer vision frameworks, such as
+OpenCV.
+The main intention of this paper is to present
+the system principle, its theoretical properties and
+real performance characteristics with respect to the
+intended application. Therefore, we present a model
+of the localization arising from theoretical analyses of
+the vision system and experimental evaluation of the
+system performance in real scenarios with regard to its
+practical deployment.
+2 Related Work
+External localization systems are widely used in the
+field of mobile robotics, either for obtaining ground
+truth pose data or for inclusion in the control loop
+of robots. In both scenarios, it is highly desirable
+to have good precision and high-frequency measure-
+ments. Here, both of these aspects are analysed in
+related works and are specifically addressed in the
+proposed system.
+Localization systems for mobile robots comprise
+an area of active research; however, the focus is gen-
+erally on internal localization methods. With these
+methods, the robot produces one or more estimates
+of its position by means of fusing internal sensors
+(either exteroceptive or proprioceptive). This estima-
+tion can also be generally applied when either a map
+of the environment exists a priori or when the map is
+being built simultaneously, which is the case of SLAM
+approaches [1]. When these internal localization sys-
+tems are studied, an external positioning reference
+(i.e., the ground truth) without any cumulative error
+is fundamental for a proper result analysis. Thus,
+this research area makes use of external localization
+systems.
+While the most well-known external localization
+reference is GPS, it is also known that it cannot be
+used indoors due to signal unavailability. This funda-
+mental limitation has motivated the design of several
+localization principles, which can be broadly divided
+into two major groups by means of the type of sensors
+used: active or passive.
+In the former group, several different technologies
+are used for the purpose of localization. One exam-
+ple [2] of active sensing is the case of a 6DoF local-
+ization system comprised of target modules, which
+include four LED emitters and a monocular camera.J Intell Robot Syst
+Markers are detected in the image and tracked in
+3D, making the system robust to partial occlusions
+and increasing performance by reducing the search
+area to the vicinity of the expected projection points.
+Experiments with this system were performed using
+both ground and aerial robots. The mean error of the
+position estimation is in the order of 1 cm, while
+the maximum error is around 10 cm. The authors
+note that for uncontrolled lighting scenarios passive
+localization systems appear to be more suitable.
+Another active sensor approach is the NorthStar [3]
+localization system, which uses ceiling projections
+as a non-permanent ambient marker. By projecting a
+known pattern, the camera position can be obtained by
+reprojection. The authors briefly report the precision
+of the system to be around 10 cm.
+In recent works, the most widely used approach
+is the commercial motion capture system from
+ViCon [4]. This system is comprised of a series of
+high-resolution and high-speed cameras, which also
+have strong infra-red (IR) emitters. By placing IR
+reflective markers on mobile robots, sub-millimeter
+precision can be achieved with updates up to 250Hz.
+Due to these qualities, ViCon has become a solid
+ground-truth information source in many recent works
+and, furthermore, has allowed development of closed-
+loop aggressive maneuvers for UAVs inside lab envi-
+ronments [5]. However, this system is still a very
+costly solution, and therefore, it is not applicable to
+every research environment. This issue has motivated
+several works proposing alternative low-cost localiza-
+tion systems.
+Several passive vision-based localization methods
+were also proposed in recent literature, using simple
+planar printable patterns, which reduce significantly
+the cost and difficulty of use and setup. Several of
+these works employ augmented-reality oriented mark-
+ers, which not only permit obtaining the pose of
+the target but can also encode additional informa-
+tion like target ID. In this area, the software libraries
+most widely used for this purpose are ARTag [6]
+and ARToolKit+ [7], both based on its predecessor
+ARToolKit [8], see examples of patterns in Fig. 1.
+These target detectors were used in several works in
+order to obtain localization information about mobile
+robots, either explicitly as a part of a pose estimation
+system [9, 10] or as ground-truth data [11].
+In [9], ARToolKit markers are used for obtaining
+the pose of several ground robots. The homography
+from 3D-to-2D space (ground floor) is computed by
+defining the work area by placing four ad-hoc mark-
+ers, which are manually detected in the image. In
+more recent work, the authors proposed the ARTag [6]
+system that was later extensively analysed in [12].
+However, the analysis is focused on detection and con-
+fusion rates, and it does not report the real accuracy
+in position estimation. Similar systems are explored
+in [13], but details of their precision are not reported.
+One particular system, which is based on AR mark-
+ers similar to ARTag and ARToolKit, is ArUco [14].
